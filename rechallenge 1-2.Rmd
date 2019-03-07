@@ -1,0 +1,307 @@
+---
+title: "Shah-pratik-HOMEWORK-02"
+author: "Pratik"
+date: "March 6, 2019"
+output: html_document
+---
+
+library(manipulate)
+library(curl)
+library(tidyverse)
+library(ggplot2)
+
+```{r}
+
+#Homework Assignment 2, Challenge 1#
+
+##Every Saturday, at the same time, a primatologist goes and sits in the forest in the morning and listens for titi monkey calls,## 
+##counting the number of calls they hear in a 2 hour window from 5am to 7am.## 
+##Based on previous knowledge, she believes that the mean number calls she will hear in that time is 15.## 
+##Let X represent the appropriate Poisson random variable of the number of calls heard in each monitoring session.##
+
+#1.a. What is the probability that she will hear more than 8 calls during any given session?#
+
+
+ppois(q=8,lambda=15)
+1-ppois(q=8,lambda=15)
+
+#1.b. What is the probability that she will hear no calls in a session?#
+
+dpois(x=0, lambda = 15)
+
+#1.c. What is the probability that she will hear exactly 3 calls in a session?#
+
+dpois(x=3, lambda = 15)
+
+#1.d. Plot the relevant Poisson mass function over the values in range 0 ≤ x ≤ 30#
+
+x <- 0:30
+probset <- dpois(x = x, lambda = 15)
+probset
+barplot(probset, names.arg = x, space = 0, xlab = "x", ylab = "Pr(X = x)", main = paste0("Probability Mass Function\nlambda = ", 
+                                                                                         15))
+
+#1.e. Simulate 104 results from this distribution (i.e., 2 years of Saturday monitoring sessions)#
+
+rpois(n=104,lambda=15) 
+
+#1.f. Plot the simulated results using hist() and use xlim() to set the horizontal limits to be from 0 to 30. How does your histogram compare to the shape of the probability mass function you plotted above?#
+
+hist(rpois(n=104, lambda = 15), xlim = c(0,30))
+
+#Compared to probability mass function (unimodal distribution), the shape of the histogram is bimodal#
+
+```
+
+
+```{r}
+
+#Homework Assignment 2, Challenge 2#
+
+
+
+
+
+f <- curl("https://raw.githubusercontent.com/difiore/ADA-2019/master/zombies.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+
+#2.a. Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education).#
+
+attach(d)
+mean(height)
+sigma <- sqrt(sum((height - mean(height))^2)/length(height))
+sigma
+mean(weight)
+kigma <- sqrt(sum((weight - mean(weight))^2)/length(weight))
+kigma
+mean(age)
+aigma <- sqrt(sum((age - mean(age))^2)/length(age))
+aigma
+mean(zombies_killed)
+nozoki <- sqrt(sum((zombies_killed - mean(zombies_killed))^2)/length(zombies_killed))
+nozoki
+mean(years_of_education)
+yedu <- sqrt(sum((years_of_education - mean(years_of_education))^2)/length(years_of_education))
+yedu
+
+#2.b. Use {ggplot} and make boxplots of each of these variables by gender.#
+
+head(d)
+ggplot(d, aes(x = gender, y = height)) + geom_boxplot()
+ggplot(d, aes(x = gender, y = weight)) + geom_boxplot()
+ggplot(d, aes(x = gender, y = age)) + geom_boxplot()
+ggplot(d, aes(x = gender, y = zombies_killed)) + geom_boxplot()
+ggplot(d, aes(x = gender, y = years_of_education)) + geom_boxplot()
+
+#2.c. Use {ggplot} and make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way?#
+
+p <- ggplot(data = d, aes(x = height, y = age)) + geom_point()
+p
+p <- ggplot(data = d, aes(x = weight, y = age)) + geom_point()
+p
+
+## There seems to be a strong correlation and regresion between age and height compared to age and weight (which also has several outliers)##
+
+#2.d. Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not?#
+
+hist(d$height)
+plot1 <- hist(d$height)
+plot2 <- hist(d$weight)
+par(mfrow = c(1,4))
+plot1
+View(plot1)
+par(mfrow = c(1,4))
+hist(d$height)
+qqnorm(d$zombies_killed)
+hist(d$zombies_killed)
+qqnorm(d$years_of_education)
+hist(years_of_education)
+
+## none of the quantative variables seem to be drawn from normal distribution ##
+
+#2.e. Now use the sample() function to sample ONE subset of 30 zombie apocalypse survivors (without replacement) from this population# 
+#and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable and# 
+#construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution,# 
+#you will need to base your estimate of the CIs on some different distribution!#
+
+head(d)
+sample_n(d, size = 30, replace = FALSE)
+z <- sample_n(d, size = 30, replace = FALSE)
+z
+mean(z$height)
+sd(z$height)
+se_height <- sd(z$height)/sqrt(30)
+se_height
+mean(z$weight)
+sd(z$weight)
+se_weight <- sd(z$weight)/sqrt(30)
+se_weight
+mean(z$zombies_killed)
+sd(z$zombies_killed)
+se_zombies_killed <- sd(z$zombies_killed)/sqrt(30)
+se_zombies_killed
+mean(z$years_of_education)
+sd(z$years_of_education)
+se_years_of_education <- sd(z$years_of_education)/sqrt(30)
+se_years_of_education
+mean(z$age)
+sd(z$age)
+se_age <- sd(z$age)/sqrt(30)
+se_age
+
+#95% confidence interval for each mean#
+
+temp.height <- rnorm(n = 30, mean = 68.45, sd = 4.05)
+temp.height
+temp.mean <- mean(temp.height)
+
+temp.mean <- mean(temp.height)
+temp.mean
+
+temp.sd <- sd(temp.height)
+temp.sd
+
+temp.se <- temp.sd/sqrt(30) 
+
+temp.se
+
+1-0.05/2
+
+critval <- qt(0.975,df=4)
+critval
+
+ temp.mean-critval*temp.se 
+ 
+ 
+ temp.mean+critval*temp.se 
+ 
+ temp.mean+c(-1,1)*qt(p=0.95,df=4)*temp.se
+
+ 
+ temp.weight <- rnorm(n = 30, mean = 149.2142, sd = 18.69315)
+ temp.weight
+ 
+ temp.mean <- mean(temp.weight)
+ 
+ temp.mean
+ 
+ temp.sd <- sd(temp.weight)
+ temp.sd
+ temp.se <- temp.sd/sqrt(30) 
+
+temp.se
+
+1-0.05/2
+
+critval <- qt(0.975,df=4)
+critval
+
+ temp.mean-critval*temp.se 
+ 
+ 
+ temp.mean+critval*temp.se 
+ 
+ temp.mean+c(-1,1)*qt(p=0.95,df=4)*temp.se
+ 
+ temp.zk <- rnorm(n = 30, mean = 3.1, sd = 1.213431)
+ temp.zk
+ 
+ temp.mean <- mean(temp.zk)
+ temp.mean
+ 
+ temp.sd <- sd(temp.zk)
+ temp.sd
+ 
+ temp.se <- temp.sd/sqrt(30)
+ 
+ temp.se
+ 
+ 1-0.05/2
+
+critval <- qt(0.975,df=4)
+critval
+
+ temp.mean-critval*temp.se 
+ 
+ 
+ temp.mean+critval*temp.se 
+ 
+ temp.mean+c(-1,1)*qt(p=0.95,df=4)*temp.se
+
+ 
+ 
+temp.yoe <- rnorm(n = 30, mean = 3, sd = 1.716)
+temp.yoe 
+ 
+temp.mean <- mean(temp.yoe) 
+ 
+temp.mean 
+ 
+temp.sd <- sd(temp.yoe)
+temp.sd
+
+
+temp.se <- temp.sd/sqrt(30)
+ 
+ temp.se
+ 
+ 1-0.05/2
+
+critval <- qt(0.975,df=4)
+critval
+
+ temp.mean-critval*temp.se 
+ 
+ 
+ temp.mean+critval*temp.se 
+ 
+ temp.mean+c(-1,1)*qt(p=0.95,df=4)*temp.se
+
+
+temp.age <- rnorm(n = 30, mean = 20.23, sd = 3.402)
+temp.age
+
+
+temp.mean <- mean(temp.age)
+temp.mean
+
+temp.sd <- sd(temp.age)
+temp.sd
+
+temp.se <- temp.sd/sqrt(30)
+temp.se
+
+1-0.05/2
+
+critval <- qt(0.975,df=4)
+critval
+
+ temp.mean-critval*temp.se 
+ 
+ 
+ temp.mean+critval*temp.se 
+ 
+ temp.mean+c(-1,1)*qt(p=0.95,df=4)*temp.se
+
+
+
+
+
+
+#2.f. Now draw 99 more random samples of 30 zombie apocalypse survivors out and calculate the mean for each of the these samples. Together with the first sample you drew out, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of the sampling distribution for each variable? How do the standard deviations compare to the standard errors estimated in [2.e.]? What do these sampling distributions look like? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?#
+ 
+ 
+ 
+
+
+head(d)
+ for (i in 1:length(d)) {
+  +  print(99*d[i])
+ }
+
+ 
+  head(s) 
+ 
+ 
+```
